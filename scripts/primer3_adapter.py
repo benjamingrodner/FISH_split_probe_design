@@ -2,7 +2,7 @@ import os
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-from pipeline.scripts import fncs
+from scripts import fncs
 import re
 import subprocess
 import glob
@@ -55,7 +55,7 @@ class Primer3(object):
                             'PRIMER_PICK_LEFT_PRIMER=0',
                             'PRIMER_PICK_INTERNAL_OLIGO=1',
                             'PRIMER_PICK_RIGHT_PRIMER=0',
-                            'PRIMER_INTERNAL_OPT_SIZE=' + str(self.opt_size,)
+                            'PRIMER_INTERNAL_OPT_SIZE=' + str(self.opt_size),
                             'PRIMER_INTERNAL_MIN_SIZE='+ str(self.min_size),
                             'PRIMER_INTERNAL_MAX_SIZE=' + str(self.max_size),
                             'PRIMER_INTERNAL_MIN_TM=' + str(self.min_tm),

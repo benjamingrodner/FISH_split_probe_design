@@ -5,6 +5,8 @@ from Bio.SeqUtils import GC as gc
 import pandas as pd
 import numpy as np
 from Bio.Seq import Seq
+import os
+import subprocess
 
 def blastProbes(query, database, output_dir, strand='both', blast_extension='.blast.out'):
     basename = os.path.split(query)[1]

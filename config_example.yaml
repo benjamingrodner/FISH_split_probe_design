@@ -4,10 +4,16 @@ output_dir: outputs
 blast_database: ../databases/homd_all_genomes.fna
 flanking_regions_filename: ../references/split_hcr_flanking_regions.csv
 
-# Inputs
+## Inputs
 input_filenames: [
                   arcobacter_16s.fasta
                   ]
+# If the targets are not present in the database leave
+    # target_seqids_in_blast_db empty. If they are in the
+    # database, provide a list of the target IDs as they 
+    # are named in the database. This is for the filtering
+    # step, so that we can remove the on target blast results
+target_seqids_in_blast_db: []
 target_naming: {'NZ_CP032823.1:785249-786766':'Acr_rrsA', 
                 'NZ_CP032099.1:c1898141-1896624':'Ask_rrsA', 
                 'NC_017187.1:c2171088-2169572':'Abu_rrsA'}
