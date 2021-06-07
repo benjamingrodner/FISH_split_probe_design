@@ -28,6 +28,14 @@ def aggregate_filtered_probe_blasts(wildcards):
                                                   "{pid}.fasta")).pid)
 
 
+def aggregate_filtered_spacer_blasts(wildcards):
+    checkpoint_output = checkpoints.prep_flanking_spacers.get(**wildcards).output[0]
+    return expand(config['output_dir'] + 
+                  "/{in_file}/spacer_selection/{target}/blast/filtered/{spacer}.csv",
+                  in_file=wildcards.in_file, target=wildcards.target,
+                  spacer=glob_wildcards(os.path.join(checkpoint_output,
+                                                  "{spacer}.fasta")).spacer)
+
 ##################
 # Parameters
 ##################
@@ -41,7 +49,6 @@ TARGETS = get_targets(INPUT_FILENAMES_FULL)
 ##################
 # Snake rules
 ##################
-# ruleorder: aggregate > blast_probes > prep_probe_files
 rule all:
     input:
 #     # first inputs
@@ -77,18 +84,35 @@ rule all:
 #                                                                    in_file=in_file, target=target) 
 #           for target in targets]
 #          for in_file, targets in zip(INPUT_BASENAMES, TARGETS)],
+    # aggregate spacers
+#         [[config['output_dir'] + '/{in_file}/spacer_selection/{target}/aggregate.txt'\
+#          .format(in_file=in_file, target=target)
+#          for target in targets]
+#          for in_file, targets in zip(INPUT_BASENAMES, TARGETS)],
+#     # select flanking spacers
+#         [[config['output_dir'] + '/{in_file}/spacer_selection/{target}/full_length_spacer_selection.csv'\
+#           .format(in_file=in_file, target=target)
+#          for target in targets]
+#          for in_file, targets in zip(INPUT_BASENAMES, TARGETS)],
+#     # merge final outputs
+#         config['output_dir'] + '/final_outputs/selection.fasta'
     # get idt order sheet
-        [config['output_dir'] + '/{in_file}/final_outputs/order_sheet.xlsx'\
-         .format(in_file=in_file) for in_file in INPUT_BASENAMES],
+        config['output_dir'] + '/final_outputs/idt_order_sheet.xlsx'
         
 include: 'rules/prep_target_files.smk'
+include: 'rules/target_alignments.smk'
 include: 'rules/design_probes.smk'
 include: 'rules/make_pairs.smk'
 include: 'rules/prep_probe_files.smk'
 include: 'rules/blast_probes.smk'
 include: 'rules/filter_blasts.smk'
-include: 'rules/aggregate_probes.smk'
+# include: 'rules/aggregate_probes.smk'
 include: 'rules/evaluate_pairs.smk'
 include: 'rules/select_pairs.smk'
-include: 'rules/append_flanking.smk'
+include: 'rules/prep_flanking_spacers.smk'
+# include: 'rules/intermediate.smk'
+include: 'rules/blast_flanking_spacers.smk'
+# include: 'rules/aggregate_spacers.smk'
+include: 'rules/select_flanking_spacers.smk'
+include: 'rules/merge_final_outputs.smk'
 include: 'rules/idt_order_sheet.smk'

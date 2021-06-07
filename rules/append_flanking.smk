@@ -13,7 +13,7 @@ rule append_flanking:
         [['{out_dir}/{in_file}/selected_pairs/{target}.csv'\
           .format(out_dir=config['output_dir'], in_file=in_file, target=target) 
           for target in targets]
-         for in_file, targets in zip(INPUT_BASENAMES, TARGETS)],
+         for in_file, targets in zip(INPUT_BASENAMES, TARGETS)]
     output:
         config['output_dir'] + '/{in_file}/final_outputs/selection.fasta',
     run:
@@ -28,8 +28,8 @@ rule append_flanking:
             flank_left, flank_right, flank_id= flanking_df.loc[flanking_df.ID == flanking_id, 
                                                                ['left_flanking', 'right_flanking', 'ID']
                                                                ].values[0].astype(list)
-            pairs['full_seq_left'] = flank_left + config['spacer'] + pairs.seq_left
-            pairs['full_seq_right'] = pairs.seq_right + config['spacer'] + flank_right
+            pairs['full_seq_left'] = pairs.seq_left + config['spacer'] + flank_left
+            pairs['full_seq_right'] = flank_right + config['spacer'] + pairs.seq_right
             # Add the sequences and their ids to the output lists
             target_name = config['target_naming'][target]
             starts = pairs.start.values

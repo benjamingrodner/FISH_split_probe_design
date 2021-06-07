@@ -13,6 +13,7 @@ rule select_pairs:
         config['output_dir'] + '/{in_file}/primer3/{target}/{target}.csv',
     output:
         config['output_dir'] + '/{in_file}/selected_pairs/{target}.csv',
+        config['output_dir'] + '/{in_file}/selected_pairs/{target}_alternate.csv',
     run:
         # Get pair evaluation
         pairs = pd.read_csv(input[0])
@@ -29,5 +30,10 @@ rule select_pairs:
         probeset_sizes = [probeset.shape[0] for probeset in probesets]
         selection_index = np.argmax(probeset_sizes)
         probeset_selection = probesets[selection_index]
-        # Safe the seleciton
-        probeset_selection.to_csv(output[0], index=False)
+        alternate_index = np.argsort(probeset_sizes)[-2]
+        probeset_alternate = probesets[alternate_index]
+#         # Safe the seleciton
+#         probeset_selection.to_csv(output[0], index=False)
+        # Save the seleciton
+        for ps, out in zip([probeset_selection, probeset_alternate], output):
+            ps.to_csv(out, index=False)

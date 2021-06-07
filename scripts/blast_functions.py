@@ -8,8 +8,9 @@ from Bio.Seq import Seq
 import os
 import subprocess
 
-def blastProbes(query, database, output_dir, strand='both', blast_extension='.blast.out'):
+def blastProbes(query, database, output_dir=False, strand='both', blast_extension='.blast.out'):
     basename = os.path.split(query)[1]
+    output_dir = os.path.split(query)[0] if not output_dir else output_dir
     output = output_dir + '/' + basename + blast_extension
     out_format = out_format = '6 qseqid sseqid pident qcovhsp length mismatch \
                                gapopen qstart qend sstart send evalue bitscore \
@@ -23,8 +24,26 @@ def blastProbes(query, database, output_dir, strand='both', blast_extension='.bl
     return
 
 
+def blastTargets(query, database, output_dir, strand='both', blast_extension='.blast.out', task='megablast', threads='1'):
+    basename = os.path.split(query)[1]
+    output = output_dir + '/' + basename + blast_extension
+    out_format = out_format = '6 qseqid sseqid pident qcovhsp length mismatch \
+                               gapopen qstart qend sstart send evalue bitscore \
+                               staxids'
+    command_line_blast = ['blastn', '-db', database, '-query', query, 
+                          '-out', output, '-outfmt', out_format, '-task',
+                          task, '-max_hsps', '1', '-max_target_seqs',
+                          '100000', '-strand', strand, '-evalue', '100', 
+                          '-num_threads', threads]       
+    subprocess.call(command_line_blast)
+    return
+
+
 def read_blast_table(filename):
-    blast = pd.read_csv(filename, sep='\t')
+    try: 
+        blast = pd.read_csv(filename, sep='\t')
+    except:
+        blast = pd.DataFrame()
     blast.columns = ['qseqid', 'sseqid', 'pident', 'qcovhsp', 'length', 'mismatch',
                      'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 
                      'bitscore', 'staxids', 'qseq', 'sseq']

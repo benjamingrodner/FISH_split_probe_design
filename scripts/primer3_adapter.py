@@ -110,7 +110,8 @@ class Primer3(object):
             df = self._get_probes_as_df(int_f)
             # Generate more accurate melting temperature values
             df['Tm_NN'] = df['seq'].apply(self._Tm)
-            csv_filename = re.sub('.int','.csv', int_f)
+            csv_filename = re.sub('\.int','.csv', int_f)
+            print('\n LOOK HERE! \n',csv_filename)
             df.to_csv(csv_filename, index=False)
             self.csv_filenames.append(csv_filename)
 

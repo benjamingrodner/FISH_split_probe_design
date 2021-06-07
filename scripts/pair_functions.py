@@ -42,37 +42,49 @@ def get_pair_info(pairs, primer3_table):
     ends = []
     seqs_left = []
     seqs_right = []
-    for index, (left, right, bad_pair_bool) in pairs.iterrows():
-        s_left, sq_left = primer3_table.loc[primer3_table.probe_num == left, 
+    mids = []
+    for index, row in pairs.iterrows():
+        l_start, l_seq = primer3_table.loc[primer3_table.probe_num == row.left, 
                                       ['start','seq']].values[0].astype(list)
-        s_right, l_right, sq_right = primer3_table.loc[primer3_table.probe_num == right, 
+        r_start, r_length, r_seq = primer3_table.loc[primer3_table.probe_num == row.right, 
                                                  ['start', 'length', 'seq']]\
                                                 .values[0].astype(list)
-        starts.append(s_left)
-        ends.append(s_right + l_right)
-        seqs_left.append(sq_left)
-        seqs_right.append(sq_right)
+        r_end = r_start + r_length
+        mid = np.mean([l_start, r_end])
+        starts.append(l_start)
+        ends.append(r_end)
+        mids.append(mid)
+        seqs_left.append(l_seq)
+        seqs_right.append(r_seq)
     pairs['start'] = starts
     pairs['end'] = ends
     pairs['seq_right'] = seqs_right
     pairs['seq_left'] = seqs_left
+    pairs['middle'] = mids
     return pairs
 
 
 def get_probesets(repetitions, pairs):
     probesets = []
-    for rep in range(repetitions):
+#     # random method
+#     for rep in range(repetitions):
+#         p_set = pd.DataFrame([], columns=pairs.columns)
+#         # Keep picking pairs and filtering until none are left 
+#         pairs_ = pairs.copy()
+#         while pairs_.shape[0] > 0:
+#             # Pick a pair at random
+#             index = random.randint(0, pairs_.shape[0]-1)
+#             selection = pairs_.iloc[index,:]    # Sort method
+    for second_sort in ['left_ot_count','right_ot_count']:
         p_set = pd.DataFrame([], columns=pairs.columns)
-        # Keep picking pairs and filtering until none are left 
-        pairs_ = pairs.copy()
+        pairs_ = pairs.sort_values(by=['combined_ot_count',second_sort], ascending=[True,True])
         while pairs_.shape[0] > 0:
-            # Pick a pair at random
-            index = random.randint(0, pairs_.shape[0]-1)
-            selection = pairs_.iloc[index,:]
+            # pick the next pair
+            selection = pairs_.iloc[0,:]
             p_set = p_set.append(selection, ignore_index=True)
             # Filter overlapping pairs
-            bool_left = pairs_.end < selection.start
-            bool_right = pairs_.start > selection.end
-            pairs_ = pairs_[bool_left | bool_right].reset_index(drop=True)
+            bool_downstream = pairs_.start > selection.end
+            bool_upstream = pairs_.end < selection.start
+            pairs_ = pairs_[bool_upstream | bool_downstream].reset_index(drop=True)
         probesets.append(p_set)
     return probesets
