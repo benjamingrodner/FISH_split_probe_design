@@ -94,25 +94,28 @@ rule all:
 #           .format(in_file=in_file, target=target)
 #          for target in targets]
 #          for in_file, targets in zip(INPUT_BASENAMES, TARGETS)],
+    # evaluate crosstalk
+        [[config['output_dir'] + '/{in_file}/evaluated_crosstalk/{target}/crosstalk_evaluation.csv'.format(in_file=in_file, target=target) for target in targets] for in_file, targets in zip(INPUT_BASENAMES, TARGETS)]
 #     # merge final outputs
 #         config['output_dir'] + '/final_outputs/selection.fasta'
-    # get idt order sheet
-        config['output_dir'] + '/final_outputs/idt_order_sheet.xlsx'
+#     # get idt order sheet
+#         config['output_dir'] + '/final_outputs/idt_order_sheet.xlsx'
         
-include: 'rules/prep_target_files.smk'
-include: 'rules/target_alignments.smk'
-include: 'rules/design_probes.smk'
-include: 'rules/make_pairs.smk'
-include: 'rules/prep_probe_files.smk'
-include: 'rules/blast_probes.smk'
-include: 'rules/filter_blasts.smk'
-# include: 'rules/aggregate_probes.smk'
-include: 'rules/evaluate_pairs.smk'
-include: 'rules/select_pairs.smk'
-include: 'rules/prep_flanking_spacers.smk'
-# include: 'rules/intermediate.smk'
-include: 'rules/blast_flanking_spacers.smk'
-# include: 'rules/aggregate_spacers.smk'
-include: 'rules/select_flanking_spacers.smk'
-include: 'rules/merge_final_outputs.smk'
-include: 'rules/idt_order_sheet.smk'
+# include: 'rules/prep_target_files.smk'
+# include: 'rules/target_alignments.smk'
+# include: 'rules/design_probes.smk'
+# include: 'rules/make_pairs.smk'
+# include: 'rules/prep_probe_files.smk'
+# include: 'rules/blast_probes.smk'
+# include: 'rules/filter_blasts.smk'
+# # include: 'rules/aggregate_probes.smk'
+# include: 'rules/evaluate_pairs.smk'
+# include: 'rules/select_pairs.smk'
+# include: 'rules/prep_flanking_spacers.smk'
+# # include: 'rules/intermediate.smk'
+# include: 'rules/blast_flanking_spacers.smk'
+# # include: 'rules/aggregate_spacers.smk'
+# include: 'rules/select_flanking_spacers.smk'
+include: 'rules/evaluate_crosstalk.smk'
+# include: 'rules/merge_final_outputs.smk'
+# include: 'rules/idt_order_sheet.smk'
