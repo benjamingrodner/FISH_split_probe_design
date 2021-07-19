@@ -5,14 +5,14 @@ from Bio import SeqIO
 
 rule merge_final_outputs:
     input:
-        [['{out_dir}/{in_file}/spacer_selection/{target}/full_length_spacer_selection.csv'\
-          .format(out_dir=config['output_dir'], in_file=in_file, target=target) 
+        [['{out_dir}/{in_file}/filtered_crosstalk/{target}/filtered_crosstalk.csv'\
+          .format(out_dir=config['output_dir'], in_file=in_file, target=target)
           for target in targets]
          for in_file, targets in zip(INPUT_BASENAMES, TARGETS)]
     output:
         config['output_dir'] + '/final_outputs/selection.fasta',
     run:
-        records = []      
+        records = []
         for fn in input:
             selection_table_full = pd.read_csv(fn)
             for index, row in selection_table_full.iterrows():
