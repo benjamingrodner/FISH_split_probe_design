@@ -26,7 +26,7 @@ def get_bad_pair_bool(blasts, min_diff):
 #     print('intersection',len(intersection))
     # for the otb overlaps, get the sstarts/sends
     for inter in intersection:
-        locs = [bl.loc[bl.sseqid == inter, ['sstart','send']] 
+        locs = [bl.loc[bl.sseqid == inter, ['sstart','send']]
                   for bl in blasts]
         # if you get one site too close together, then give them False bool
         for index, s in locs[0].sstart.items():
@@ -44,9 +44,9 @@ def get_pair_info(pairs, primer3_table):
     seqs_right = []
     mids = []
     for index, row in pairs.iterrows():
-        l_start, l_seq = primer3_table.loc[primer3_table.probe_num == row.left, 
+        l_start, l_seq = primer3_table.loc[primer3_table.probe_num == row.left,
                                       ['start','seq']].values[0].astype(list)
-        r_start, r_length, r_seq = primer3_table.loc[primer3_table.probe_num == row.right, 
+        r_start, r_length, r_seq = primer3_table.loc[primer3_table.probe_num == row.right,
                                                  ['start', 'length', 'seq']]\
                                                 .values[0].astype(list)
         r_end = r_start + r_length
@@ -64,12 +64,13 @@ def get_pair_info(pairs, primer3_table):
     return pairs
 
 
-def get_probesets(repetitions, pairs):
+def get_probesets(pairs):
+# def get_probesets(repetitions, pairs):
     probesets = []
 #     # random method
 #     for rep in range(repetitions):
 #         p_set = pd.DataFrame([], columns=pairs.columns)
-#         # Keep picking pairs and filtering until none are left 
+#         # Keep picking pairs and filtering until none are left
 #         pairs_ = pairs.copy()
 #         while pairs_.shape[0] > 0:
 #             # Pick a pair at random

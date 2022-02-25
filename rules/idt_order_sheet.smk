@@ -3,14 +3,14 @@
 # write an idt order sheet excel file
 ########################################################################
 
-# Needs to be a script because we need the right environment to get the 
+# Needs to be a script because we need the right environment to get the
     # pandas excel functionality
 
 rule idt_order_sheet:
     input:
-        config['output_dir'] + '/final_outputs/selection.fasta',
+        config['final_outputs_dir'] + '/selection.fasta',
     output:
-        config['output_dir'] + '/final_outputs/idt_order_sheet.xlsx',
+        config['final_outputs_dir'] + '/idt_order_sheet.xlsx'
     params:
         scripts_path = config['pipeline_dir']
 #     conda:

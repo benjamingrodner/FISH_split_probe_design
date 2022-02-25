@@ -10,7 +10,7 @@ rule prep_target_files:
     input:
         config['input_dir'] + '/{in_file}' + INPUT_EXT
     output:
-        config['output_dir'] + '/{in_file}/target_files/{target}.fasta'
+        config['probe_generate_dir'] + '/{in_file}/target_files/{target}.fasta'
     run:
         out_dir = os.path.split(output[0])[0]
         name = os.path.split(input[0])[1]

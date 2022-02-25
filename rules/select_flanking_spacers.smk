@@ -4,19 +4,19 @@ import pandas as pd
 
 rule select_flanking_spacers:
     input:
-        config['output_dir'] + '/{in_file}/selected_pairs/{target}.csv',
-        config['output_dir'] + '/{in_file}/spacer_selection/{target}/blast/inputs',
+        config['probe_select_dir'] + '/{in_file}/selected_pairs/{target}.csv',
+        config['spacer_select_dir'] + '/{in_file}/blast/{target}/inputs',
         aggregate_filtered_spacer_blasts,
     output:
-        config['output_dir'] + '/{in_file}/spacer_selection/{target}/full_length_spacer_selection.csv',
-        config['output_dir'] + '/final_outputs/{in_file}_{target}_selection_info_table.csv'
+        config['spacer_select_dir'] + '/{in_file}/spacer_selection/{target}.csv',
+        config['final_outputs_dir'] + '/{in_file}/selection_table/{target}.csv'
     run:
         selected_pairs = pd.read_csv(input[0])
         # Count strong blasts and combine into a single df for each selected probe
         l_results_list = []
         r_results_list = []
         start_list = selected_pairs.start.values
-        cols = ['seq_full','ot_count','max_ot_gc','max_ot_mch','max_ot_tm']
+        cols = ['spacer','seq_full','ot_count','max_ot_gc','max_ot_mch','max_ot_tm']
         for start in start_list:
             l_result_df = pd.DataFrame(columns=cols)
             r_result_df = pd.DataFrame(columns=cols)
@@ -31,13 +31,13 @@ rule select_flanking_spacers:
                     max_ot_gc = blast_filtered.GC.max()
                     max_ot_mch = blast_filtered.MCH.max()
                     max_ot_tm = blast_filtered.TM.max()
-                    blast_summary = pd.Series([str(seq), ot_count, max_ot_gc, max_ot_mch, max_ot_tm], index=cols)
+                    blast_summary = pd.Series([spacer, str(seq), ot_count, max_ot_gc, max_ot_mch, max_ot_tm], index=cols)
                     if 'L' in spacer:
                         l_result_df = l_result_df.append(blast_summary, ignore_index=True)
                     else:
                         r_result_df = r_result_df.append(blast_summary, ignore_index=True)
             l_results_list.append(l_result_df)
-            r_results_list.append(r_result_df)        
+            r_results_list.append(r_result_df)
         # Pick the best spacer for each probe
         series = []
         for start, left_results, right_results in zip(start_list, l_results_list, r_results_list):
@@ -57,4 +57,3 @@ rule select_flanking_spacers:
         selection_table_full['probe_name_r'] = 'sp_' + flanking_id + '.' + target_name + '_' + starts + '.R'
         selection_table_full.to_csv(output[0])
         selection_table_full.to_csv(output[1])
-        

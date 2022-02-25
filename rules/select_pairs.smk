@@ -9,11 +9,11 @@ import pandas as pd
 
 rule select_pairs:
     input:
-        config['output_dir'] + '/{in_file}/evaluated_pairs/{target}.csv',
-        config['output_dir'] + '/{in_file}/primer3/{target}/{target}.csv',
+        config['probe_select_dir'] + '/{in_file}/evaluated_pairs/{target}.csv',
+        config['probe_generate_dir'] + '/{in_file}/primer3/{target}/{target}.csv',
     output:
-        config['output_dir'] + '/{in_file}/selected_pairs/{target}.csv',
-        config['output_dir'] + '/{in_file}/selected_pairs/{target}_alternate.csv',
+        config['probe_select_dir'] + '/{in_file}/selected_pairs/{target}.csv',
+        config['probe_select_dir'] + '/{in_file}/selected_pairs/{target}_alternate.csv',
     run:
         # Get pair evaluation
         pairs = pd.read_csv(input[0])
@@ -24,8 +24,9 @@ rule select_pairs:
         # Concatenate start and end info to pairs
         pairs = get_pair_info(pairs=pairs, primer3_table=probes)
         # repeat the whole selection process a fixed number of times
-        repetitions = config['probe_selection']['repetitions']
-        probesets = get_probesets(repetitions=repetitions, pairs=pairs)
+        # repetitions = config['probe_selection']['repetitions']
+        # probesets = get_probesets(repetitions=repetitions, pairs=pairs)
+        probesets = get_probesets(pairs=pairs)
         # select the largest probeset
         probeset_sizes = [probeset.shape[0] for probeset in probesets]
         selection_index = np.argmax(probeset_sizes)

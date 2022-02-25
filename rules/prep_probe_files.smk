@@ -1,9 +1,9 @@
 # Split probes into individual fasta files in preparation for blasting
 checkpoint prep_probe_files:
     input:
-        config['output_dir'] + '/{in_file}/primer3/{target}/{target}.fasta'
+        config['probe_generate_dir'] + '/{in_file}/primer3/{target}/{target}.fasta'
     output:
-        directory(config['output_dir'] + '/{in_file}/blast/{target}/probes')
+        directory(config['probe_generate_dir'] + '/{in_file}/blast/{target}/probes')
     run:
         records = SeqIO.parse(input[0], 'fasta')
         for r in records:

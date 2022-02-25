@@ -2,10 +2,10 @@ import pandas as pd
 # Filter the probes
 rule filter_crosstalk:
     input:
-        config['output_dir'] + '/{in_file}/evaluated_crosstalk/{target}/crosstalk_evaluation.csv',
-        config['output_dir'] + '/{in_file}/spacer_selection/{target}/full_length_spacer_selection.csv'
+        config['crosstalk_dir'] + '/{in_file}/evaluated_crosstalk/{target}.csv',
+        config['spacer_select_dir'] + '/{in_file}/spacer_selection/{target}.csv'
     output:
-        config['output_dir'] + '/{in_file}/filtered_crosstalk/{target}/filtered_crosstalk.csv'
+        config['crosstalk_dir'] + '/{in_file}/filtered_crosstalk/{target}.csv'
     run:
         pairs_df = pd.read_csv(input[1])
         crosstalk_df = pd.read_csv(input[0])

@@ -23,7 +23,7 @@ class Primer3Error(Exception):
 
 
 class Primer3(object):
-    def __init__(self, fasta_filename, min_tm=50, 
+    def __init__(self, fasta_filename, min_tm=50,
                  Na=390, dnac1_oligo=100, min_size=18, opt_size=20, max_size=22):
         self.fasta_filename = fasta_filename
         self.targets = [record.id for record in SeqIO.parse(fasta_filename, 'fasta')]
@@ -34,14 +34,14 @@ class Primer3(object):
         self.min_size = min_size
         self.opt_size = opt_size
         self.max_size = max_size
-        
+
     def _make_fasta_output_dir(self, primer3_dir):
         p3_dir = os.path.abspath(fncs.remove_slash(primer3_dir))
         basename = os.path.basename(self.fasta_filename)
         basename = re.sub('.fasta', '', basename)
         self.output_dir = '{}/{}'.format(p3_dir, basename)
         fncs.confirm_dir_exists(self.output_dir)
-        
+
     def _write_primer3_settings_file(self):
         primer3_settings = ['Primer3 File - http://primer3.sourceforge.net',
                             'P3_FILE_TYPE=settings',
@@ -74,7 +74,7 @@ class Primer3(object):
                     file.write(line + '\n')
             print('Wrote: ', self.primer3_settings_filename)
         return
-        
+
     def _write_input(self):
         open(self.primer3_input, 'w').close()
         for seq_record in SeqIO.parse(self.fasta_filename, "fasta"):
@@ -89,18 +89,18 @@ class Primer3(object):
     def _run_primer3(self):
         subprocess.check_call(['/programs/primer3-2.3.5/src/primer3_core', '-p3_settings_file', self.primer3_settings_filename, '-output', self.primer3_output, '-format_output', self.primer3_input])
         return
-                        
+
     def _get_probes_as_df(self, probe_filename):
         probes = pd.read_csv(probe_filename, skiprows=3, header=None, sep='\s+')
         probes.columns = ['probe_num', 'seq', 'start', 'length', 'N', 'GC', 'Tm', 'self_any_th', 'self_end_th', 'hairpin', 'quality']
         return probes
-    
+
     def get_probe_dfs(self):
         return [pd.read_csv(fn) for fn in self.csv_filenames]
-        
-    
+
+
     def _Tm(self, sequence):
-        return mt.Tm_NN(sequence, Na = self.Na, saltcorr = 7, 
+        return mt.Tm_NN(sequence, Na = self.Na, saltcorr = 7,
                         dnac1 = self.dnac1_oligo, dnac2 = 1)
 
     def _write_csv_dataframes(self):
@@ -111,7 +111,6 @@ class Primer3(object):
             # Generate more accurate melting temperature values
             df['Tm_NN'] = df['seq'].apply(self._Tm)
             csv_filename = re.sub('\.int','.csv', int_f)
-            print('\n LOOK HERE! \n',csv_filename)
             df.to_csv(csv_filename, index=False)
             self.csv_filenames.append(csv_filename)
 
@@ -124,7 +123,7 @@ class Primer3(object):
             probe_fasta_filename = re.sub('.csv','.fasta', csv_f)
             SeqIO.write(records, probe_fasta_filename, 'fasta')
             self.probe_fasta_filenames.append(probe_fasta_filename)
-            
+
     def design_probes(self, output_dir):
         self._make_fasta_output_dir(output_dir)
         self.primer3_settings_filename = self.output_dir + '/primer3_settings.txt'
@@ -139,10 +138,3 @@ class Primer3(object):
         self._write_probe_fastas()
         print('Designed probes for: ', self.fasta_filename)
         print('Probes for each feature written in: ', self.output_dir)
-
-            
-                    
-
-
-
-

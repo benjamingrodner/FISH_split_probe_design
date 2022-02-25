@@ -10,12 +10,14 @@ from Bio import SeqIO
 
 checkpoint prep_flanking_spacers:
     input:
-        config['output_dir'] + '/{in_file}/selected_pairs/{target}.csv'
+        config['probe_select_dir'] + '/{in_file}/selected_pairs/{target}.csv',
+        config['probe_select_dir'] + '/{in_file}/selected_pairs/{target}_alternate.csv'
     output:
-        directory(config['output_dir'] + '/{in_file}/spacer_selection/{target}/blast/inputs')
+        directory(config['spacer_select_dir'] + '/{in_file}/blast/{target}/inputs')
     run:
         # Read in selected pairs
-        selected_pairs = pd.read_csv(input[0])
+        pselect = 1 if config['select_alternate_design'] else 0
+        selected_pairs = pd.read_csv(input[pselect])
         # Build spacers
         spacers = []
         bases = ['a','t','c','g']
@@ -28,9 +30,9 @@ checkpoint prep_flanking_spacers:
         seq_right=pd.DataFrame(columns=['start','right', 'seq_right'])
         for index, row in selected_pairs.iterrows():
             sl = row[['start','left', 'seq_left']]
-            seq_left = seq_left.append(sl)    
+            seq_left = seq_left.append(sl)
             sr = row[['start','right', 'seq_right']]
-            seq_right = seq_right.append(sr) 
+            seq_right = seq_right.append(sr)
         seq_left['hand'] = 'L'
         seq_right['hand'] = 'R'
         cols = ['start','probe_id','seq','hand']
@@ -40,7 +42,7 @@ checkpoint prep_flanking_spacers:
         # Get flanking regions
         flanking_id = config['target_flanking'][wildcards.target]
         flanking_df = pd.read_csv(config['flanking_regions_filename'])
-        flank_left, flank_right, flank_id= flanking_df.loc[flanking_df.ID == flanking_id, 
+        flank_left, flank_right, flank_id= flanking_df.loc[flanking_df.ID == flanking_id,
                                                            ['left_flanking', 'right_flanking', 'ID']
                                                            ].values[0].astype(list)
         # Append flanking and write fastas
@@ -48,7 +50,7 @@ checkpoint prep_flanking_spacers:
             os.makedirs(output[0])
         for start, pid, seq, hand in seq_table.values:
             for sp in spacers:
-                if hand=='L':   
+                if hand=='L':
                     seq_full = seq + sp + flank_left
                 else:
                     seq_full = flank_right + sp + seq

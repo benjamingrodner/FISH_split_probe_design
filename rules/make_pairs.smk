@@ -4,9 +4,9 @@ import pandas as pd
 # Make probe pairs that are near each other
 rule make_pairs:
     input:
-        config['output_dir'] + '/{in_file}/primer3/{target}/{target}.csv'
+        config['probe_generate_dir'] + '/{in_file}/primer3/{target}/{target}.csv'
     output:
-        config['output_dir'] + '/{in_file}/all_pairs_index/{target}.csv'      
+        config['probe_generate_dir'] + '/{in_file}/all_pairs_index/{target}.csv'
     run:
         probe_df = pd.read_csv(input[0])
         starts = probe_df.start.values.astype(list)

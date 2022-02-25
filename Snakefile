@@ -21,7 +21,7 @@ def get_targets(input_filenames):
 
 def aggregate_filtered_probe_blasts(wildcards):
     checkpoint_output = checkpoints.prep_probe_files.get(**wildcards).output[0]
-    return expand(config['output_dir'] +
+    return expand(config['probe_select_dir'] +
                   "/{in_file}/blast/{target}/filtered/{pid}.csv",
                   in_file=wildcards.in_file, target=wildcards.target,
                   pid=glob_wildcards(os.path.join(checkpoint_output,
@@ -30,8 +30,8 @@ def aggregate_filtered_probe_blasts(wildcards):
 
 def aggregate_filtered_spacer_blasts(wildcards):
     checkpoint_output = checkpoints.prep_flanking_spacers.get(**wildcards).output[0]
-    return expand(config['output_dir'] +
-                  "/{in_file}/spacer_selection/{target}/blast/filtered/{spacer}.csv",
+    return expand(config['spacer_select_dir'] +
+                  "/{in_file}/blast/{target}/filtered/{spacer}.csv",
                   in_file=wildcards.in_file, target=wildcards.target,
                   spacer=glob_wildcards(os.path.join(checkpoint_output,
                                                   "{spacer}.fasta")).spacer)
@@ -97,10 +97,16 @@ rule all:
     # # evaluate crosstalk
     #     [[config['output_dir'] + '/{in_file}/evaluated_crosstalk/{target}/crosstalk_evaluation.csv'.format(in_file=in_file, target=target) for target in targets] for in_file, targets in zip(INPUT_BASENAMES, TARGETS)]
         # [[config['output_dir'] + '/{in_file}/filtered_crosstalk/{target}/filtered_crosstalk.csv'.format(in_file=in_file, target=target) for target in targets] for in_file, targets in zip(INPUT_BASENAMES, TARGETS)]
+    # # Get helpers
+    #     [[config['output_dir']
+    #             + '/{in_file}/helper/selection/{target}.csv'.format(
+    #             in_file=in_file, target=target)
+    #             for target in targets]
+    #             for in_file, targets in zip(INPUT_BASENAMES, TARGETS)]
 #     # merge final outputs
 #         config['output_dir'] + '/final_outputs/selection.fasta'
     # get idt order sheet
-        config['output_dir'] + '/final_outputs/idt_order_sheet.xlsx'
+        config['final_outputs_dir'] + '/idt_order_sheet.xlsx'
 
 include: 'rules/prep_target_files.smk'
 include: 'rules/target_alignments.smk'
@@ -119,5 +125,7 @@ include: 'rules/blast_flanking_spacers.smk'
 include: 'rules/select_flanking_spacers.smk'
 include: 'rules/evaluate_crosstalk.smk'
 include: 'rules/filter_crosstalk.smk'
+include: 'rules/design_helpers.smk'
+include: 'rules/select_helpers.smk'
 include: 'rules/merge_final_outputs.smk'
 include: 'rules/idt_order_sheet.smk'

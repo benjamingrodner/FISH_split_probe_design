@@ -6,36 +6,44 @@
 ## Paths
 # Make all of your paths relative to the location where you will execute the snakemake
     # in the command line
-input_dir: example_inputs # Path to wherever your 'input_filenames' are
-output_dir: outputs # Name of the directory you want to write to,
-                        # does not need to exist yet
-blast_database: example_database/example.fna # Database to check for off-target binding
-flanking_regions_filename: references/split_hcr_flanking_regions.csv # File containing the
+input_dir: ../run_003/inputs # Path to wherever your 'input_filenames' are
+
+probe_generate_dir: ../run_003/outputs  # Where to put the brute force primer3 design
+target_alignment_dir: outputs/target_alignment
+probe_select_dir: outputs/probe_selection
+spacer_select_dir: outputs/spacer_selection
+crosstalk_dir: outputs/crosstalk
+helper_select_dir: outputs/helper_selection
+final_outputs_dir: outputs/final_outputs
+
+blast_database: ../../databases/2022_02_15_combined-2021_04_03_contigs-bmg_m/2022_02_15_combined-2021_04_03_contigs-bmg_m.fna # Database to check for off-target binding
+flanking_regions_filename: ../../references/split_hcr_flanking_regions.csv # File containing the
                                                                             # readout sequences
-pipeline_dir: . # Path to the 'split_probe_design' directory cloned from github
+pipeline_dir: /workdir/bmg224/hiprfish/probe_design/split_probe_design # Path to the 'split_probe_design' directory cloned from github
 
 ## Inputs
 input_filenames: [
-                  example.fasta
+                  PBG-3104.plaque_mk_m_20210301_.CCS2.0000006459_plus_pstrip_filt_unique_lautropia_pdesign.fasta
                   ]
-target_seqids_in_blast_db: [] # If the targets are not present in the database leave
-                                  # target_seqids_in_blast_db empty. If they are in the
-                                  # database, provide a list of the target IDs as they
-                                  # are named in the database. This is for the filtering
-                                  # step, so that we can remove the on target blast results
-target_naming: {'NZ_CP032823.1:785249-786766':'Acr_rrsA',
-                'NZ_CP032099.1:c1898141-1896624':'Ask_rrsA',
-                'NC_017187.1:c2171088-2169572':'Abu_rrsA'} # Dictionairy specifying easy-to-read
+on_target_id_filename: False
+                        # File in input folder containing manually
+                        # collected on-target sequence ids in the database
+                        # Tab format with columns: sseqid,sstart,send,aln_sub (bool for if we should consider only a subset of that sseqid between sstart,send, or the whole thing).
+                        # Otherwise set to False
+target_naming: {'bmg_m.29;size=959;':'Lau'}
+                                          # Dictionairy specifying easy-to-read
                                                                 # names for each target
-target_flanking: {'NZ_CP032823.1:785249-786766':'B2',
-                  'NZ_CP032099.1:c1898141-1896624':'B2',
-                  'NC_017187.1:c2171088-2169572':'B2'} # Assign each target a readout region by
-                                                            # referencing an ID from the
-                                                            # 'flanking_regions_filename'
+target_flanking: {'bmg_m.29;size=959;':'B2'}
+                                    # Assign each target a readout region by
+                                    # referencing an ID from the
+                                    # 'flanking_regions_filename'
 ## Params
-target_alignment_qcovhsp: 50 # Targets are blasted against database. Set the minimum qcovhsp for
-                                  # database alignments to be assigned as eqivalent to the target
-design_reverse_complement: True # Probes will have the same sequence as the input target, so
+target_alignment:
+  target_in_db: True  # If you are certain the targets are not present in the database set to false
+  min_pident: 80  # Targets are blasted against database. Set minimum percent identity
+                  # for database alignments to be assigned as "on-target"
+  min_qcovhsp: 30 # Set the minimum query coverage
+design_reverse_complement: False # Probes will have the same sequence as the input target, so
                                     # they will hybridize to the reverse complement of the input
                                     # sequence. If you want your probes to hybridize to the input
                                     # sequence, set design_reverse_complement as True.
@@ -54,10 +62,16 @@ mch_filter: 12 # Maximum continuous homology for an off-target blast result to n
                     # hybridization
 tm_filter: 48 # Maximum melting temperature for a blast result to not be considered strong
 gc_filter: 7 # Maximum GC count for a blast result to not be considered strong
-minimum_bp_between_off_target_sites: 100 # If a left and right probe hybridize off-target at
+minimum_bp_between_off_target_sites: 500 # If a left and right probe hybridize off-target at
                                               # a distance from each other (in bases) less
                                               # than this value, then the probe pair will be
                                               # removed
 maximum_crosstalk_events: 9 # The maximum number of times a probe pair can have off-target
                                   # interactions with another probe (as defined by
                                   # 'minimum_bp_between_off_target_sites') in the probe set
+select_alternate_design: False  # Pairs are selected to minimize the left probe off target results
+                                # unless this is set to True, in which case the right probes are minimized
+get_helpers:
+    same_strand: True  # If True, design probes without flanking regions and without specificit
+    other_strand: False  # If True, design helper probes for the reverse complement
+                            # strand as well as the gaps in the probe strand
