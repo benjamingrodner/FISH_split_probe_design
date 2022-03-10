@@ -131,23 +131,26 @@ def _get_on_target_bool(blast, target_alignments):
             ot_startend = pd.Series(np.ones(blast.shape[0]))
         # To be considered on-target, blast must fulfill all conditions
         on_target_bool += (ot_sseqid & ot_sstrand & ot_startend)
-    return np.invert(on_target_bool.astype(bool))
+    return on_target_bool  # return ones where blast is off target
+    # return np.invert(on_target_bool.astype(bool))  # return ones where blast is off target
 
-def measure_blasts(blast):
+def measure_blasts(blast, target_alignments):
     blast['MCH'] = blast.apply(lambda x: max_continuous_homology(x.qseq, x.sseq), axis=1)
     blast['TM'] = blast.apply(lambda x: melting_temperature(x.qseq, x.sseq), axis=1)
     blast['GC'] = blast.apply(lambda x: gc_content(x.qseq, x.length), axis=1)
+    blast['on_target'] = _get_on_target_bool(blast,target_alignments)
     return blast
 
-def filter_blasts(blast,target_alignments, mch_filter, tm_filter, gc_filter):
+def filter_blasts(blast, mch_filter, tm_filter, gc_filter):
     # Create filter to remove all except the strongest interactinos
     mch_bool = blast.MCH >= mch_filter
     tm_bool = blast.TM >= tm_filter
     gc_bool = blast.GC >= gc_filter
     # Create filter to ignore on-target blasts
-    ot_bool = _get_on_target_bool(blast, target_alignments)
+    ot_bool = blast.on_target == 0
+    # ot_bool = _get_off_target_bool(blast, target_alignments)
     # Apply boolean filters
-    return blast.loc[mch_bool & tm_bool & gc_bool & ot_bool, :]
+    return blast.loc[(mch_bool | tm_bool | gc_bool) & ot_bool, :]
 
 # def _check_each(reference_blast, sseqid, sstart, send, ):
 #     return

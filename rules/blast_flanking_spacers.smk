@@ -22,14 +22,14 @@ rule blast_flanking_spacers:
         blast = bf.read_blast_table(output[0])
         if blast.shape[0] > 0:
             # calculate mch, tm and gc contents
-            # calculate mch, tm and gc contents
-            blast = bf.measure_blasts(blast)
+            # calculate mch, tm and gc contents, and on target boolean 
+            target_alignments = pd.read_csv(input[1])
+            blast = bf.measure_blasts(blast, target_alignments)
             # blast['MCH'] = blast.apply(lambda x: bf.max_continuous_homology(x.qseq, x.sseq), axis=1)
             # blast['TM'] = blast.apply(lambda x: bf.melting_temperature(x.qseq, x.sseq), axis=1)
             # blast['GC'] = blast.apply(lambda x: bf.gc_content(x.qseq, x.length), axis=1)
             # Sort blast start and end
-            target_alignments = pd.read_csv(input[1])
-            blast_filtered = bf.filter_blasts(blast, target_alignments,
+            blast_filtered = bf.filter_blasts(blast,
                                               mch_filter=config['mch_filter'],
                                               tm_filter=config['tm_filter'],
                                               gc_filter=config['gc_filter'])

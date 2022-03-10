@@ -89,3 +89,8 @@ def get_probesets(pairs):
             pairs_ = pairs_[bool_upstream | bool_downstream].reset_index(drop=True)
         probesets.append(p_set)
     return probesets
+
+
+def get_pair_overlap(blasts):
+    bl_ssids = [bl.sseqid.values for bl in blasts]
+    return np.intersect1d(bl_ssids[1], bl_ssids[0])

@@ -15,8 +15,8 @@ rule filter_blasts:
         # calculate mch, tm and gc contents
         if blast.shape[0] > 0:
             target_alignments = pd.read_csv(input[1])
-            blast_measured = fn.measure_blasts(blast)
-            blast_filtered = fn.filter_blasts(blast_measured, target_alignments,
+            blast_measured = fn.measure_blasts(blast, target_alignments)
+            blast_filtered = fn.filter_blasts(blast_measured,
                                               mch_filter=config['mch_filter'],
                                               gc_filter=config['gc_filter'],
                                               tm_filter=config['tm_filter'])
