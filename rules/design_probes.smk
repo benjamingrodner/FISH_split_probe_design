@@ -15,5 +15,5 @@ rule design_probes:
                             )
         target_dir = os.path.split(output[0])[0]
         p3_dir = os.path.split(target_dir)[0]
-        print('\n LOOK HERE! \n',p3_dir)
+        # print('\n LOOK HERE! \n',p3_dir)
         p3_object.design_probes(output_dir=p3_dir)

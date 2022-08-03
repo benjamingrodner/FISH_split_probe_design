@@ -11,7 +11,7 @@ rule design_helpers:
     output:
         config['helper_select_dir'] + '/{in_file}/primer3/{target}/{target}.fasta',
         config['helper_select_dir'] + '/{in_file}/primer3/{target}/{target}.csv',
-        config['probe_generate_dir'] + '/{in_file}/target_files/reverse_complement/{target}.fasta',
+        config['probe_generate_dir'] + '/{in_file}/target_files/reverse_complement_helper/{target}.fasta',
         config['helper_select_dir'] + '/{in_file}/primer3/reverse_complement/{target}/{target}.fasta',
         config['helper_select_dir'] + '/{in_file}/primer3/reverse_complement/{target}/{target}.csv'
     run:
