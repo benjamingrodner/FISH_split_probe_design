@@ -48,6 +48,10 @@ snakemake --snakefile {PATH_TO_PIPELINE_DIRECTORY}/Snakefile \
           --configfile {CONFIG_FILENAME}
 ```
 
+### Run probe design on example data 
+
+    snakemake --configfile config_example.yaml -j 4
+
 
 ## Workflow
 Below is a rule graph of the Snakemake pipeline. Note that the rule 'prep_probe_files' is a checkpoint with the rules 'blast_probes' and 'filter_blasts' dependent on its output and thus not evaluated in the DAG until 'prep_probe_files' is complete. Thus 'blast_probes' and 'filter_blasts' fit between 'prep_probe_files' and 'evaluate_pairs'. The rule 'filter_blasts' also depends on the output of the rule 'target_alignments', which is also not shown in the rule graph.
