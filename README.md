@@ -5,6 +5,9 @@ The advantage here is that both probes are required to bind to the target site i
 This is meant to increase the probe specificity.
 This probe design is based on brute-force design of all possible probes, then filtering based on specificity.
 
+## Layout
+
+The pipeline runs by executing the [Snakefile](https://github.com/benjamingrodner/FISH_split_probe_design/blob/main/Snakefile). The Snakefile refers to a series of [rules](https://github.com/benjamingrodner/FISH_split_probe_design/tree/main/rules), which directly run chunks of python code as well as specify the input and output files for the chunks. The code in the rules executes python functions loaded as modules from [scripts](https://github.com/benjamingrodner/FISH_split_probe_design/tree/main/scripts). The Snakefile, rules, and functions reference the [configuration file](https://github.com/benjamingrodner/FISH_split_probe_design/blob/main/config_example.yaml) to determine the specific filepaths and variable settings for the run. 
 
 ## Package requirements
 [primer3](https://github.com/primer3-org/primer3)
@@ -52,3 +55,52 @@ Below is a rule graph of the Snakemake pipeline. Note that the rule 'prep_probe_
 
 [](./rulegraph.svg)
 <img src="./rulegraph.svg">
+
+## Output File Structure 
+
+          output_dir
+          ├── crosstalk
+          │   └── TARGET_FASTA_BASENAME
+          │       ├── evaluated_crosstalk
+          │       └── filtered_crosstalk
+          ├── final_outputs
+          │   └── TARGET_FASTA_BASENAME
+          │       └── selection_table
+          ├── helper_selection
+          │   └── TARGET_FASTA_BASENAME
+          │       ├── primer3
+          │       │   ├── reverse_complement
+          │       │   │   └── FASTA_ENTRY_ID
+          │       │   └── FASTA_ENTRY_ID
+          │       └── selection
+          ├── probe_generate
+          │   └── TARGET_FASTA_BASENAME
+          │       ├── all_pairs_index
+          │       ├── blast
+          │       │   └── FASTA_ENTRY_ID
+          │       │       ├── probes
+          │       │       └── results
+          │       ├── primer3
+          │       │   └── FASTA_ENTRY_ID
+          │       └── target_files
+          │           └── reverse_complement
+          ├── probe_selection
+          │   └── TARGET_FASTA_BASENAME
+          │       ├── blast
+          │       │   └── FASTA_ENTRY_ID
+          │       │       ├── filtered
+          │       │       └── measured
+          │       ├── evaluated_pairs
+          │       └── selected_pairs
+          ├── spacer_selection
+          │   └── TARGET_FASTA_BASENAME
+          │       ├── blast
+          │       │   └── FASTA_ENTRY_ID
+          │       │       ├── filtered
+          │       │       ├── inputs
+          │       │       └── outputs
+          │       └── spacer_selection
+          └── target_alignment
+              └── TARGET_FASTA_BASENAME
+                  ├── blast
+                  └── filtered
