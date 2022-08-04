@@ -13,8 +13,8 @@ rule filter_blasts:
         # Read in blast table
         blast = fn.read_blast_table(input[0])
         # calculate mch, tm and gc contents
+        target_alignments = pd.read_csv(input[1])
         if blast.shape[0] > 0:
-            target_alignments = pd.read_csv(input[1])
             blast_measured = fn.measure_blasts(blast, target_alignments)
             blast_filtered = fn.filter_blasts(blast_measured,
                                               mch_filter=config['mch_filter'],
@@ -56,7 +56,7 @@ rule filter_blasts:
             blast_filtered = blast
         # Check the removal of on targets
         should_be_filtered = [blast_filtered[blast_filtered.sseqid == t].shape[0] for t in target_alignments.sseqid]
-        print('LOOK HERE: ', sum(should_be_filtered))
+        # print('LOOK HERE: ', sum(should_be_filtered))
         # save the resulting file
         blast_measured.to_csv(output[0], index=False)
         blast_filtered.to_csv(output[1], index=False)

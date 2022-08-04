@@ -28,9 +28,12 @@ rule select_flanking_spacers:
                     record = SeqIO.parse(fasta_fn, 'fasta')
                     seq = [r.seq for r in record][0]
                     ot_count = blast_filtered.shape[0]
-                    max_ot_gc = blast_filtered.GC.max()
-                    max_ot_mch = blast_filtered.MCH.max()
-                    max_ot_tm = blast_filtered.TM.max()
+                    if ot_count:
+                        max_ot_gc = blast_filtered.GC.max()
+                        max_ot_mch = blast_filtered.MCH.max()
+                        max_ot_tm = blast_filtered.TM.max()
+                    else:
+                        max_ot_gc, max_ot_mch, max_ot_tm = 0,0,0
                     blast_summary = pd.Series([spacer, str(seq), ot_count, max_ot_gc, max_ot_mch, max_ot_tm], index=cols)
                     if 'L' in spacer:
                         l_result_df = l_result_df.append(blast_summary, ignore_index=True)

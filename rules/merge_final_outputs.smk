@@ -28,7 +28,10 @@ rule merge_final_outputs:
         if bool_help_same or bool_help_other:
             # if so, write to the fasta
             for fn in input.helpers:
-                helper_table = pd.read_csv(fn)
-                for index, row in helper_table.iterrows():
-                    records.append(SeqRecord(Seq(row.seq), id=row.helper_name))
+                try:
+                    helper_table = pd.read_csv(fn)
+                    for index, row in helper_table.iterrows():
+                        records.append(SeqRecord(Seq(row.seq), id=row.helper_name))
+                except:
+                    pass
         SeqIO.write(records, output[0], 'fasta')

@@ -6,9 +6,9 @@
 ## Paths
 # Make all of your paths relative to the location where you will execute the snakemake
     # in the command line
-input_dir: ../run_003/inputs # Path to wherever your 'input_filenames' are
+input_dir: example_inputs # Path to wherever your 'input_filenames' are
 
-probe_generate_dir: ../run_003/outputs  # Where to put the brute force primer3 design
+probe_generate_dir: outputs  # Where to put the brute force primer3 design
 target_alignment_dir: outputs/target_alignment
 probe_select_dir: outputs/probe_selection
 spacer_select_dir: outputs/spacer_selection
@@ -16,24 +16,22 @@ crosstalk_dir: outputs/crosstalk
 helper_select_dir: outputs/helper_selection
 final_outputs_dir: outputs/final_outputs
 
-blast_database: ../../databases/2022_02_15_combined-2021_04_03_contigs-bmg_m/2022_02_15_combined-2021_04_03_contigs-bmg_m.fna # Database to check for off-target binding
-flanking_regions_filename: ../../references/split_hcr_flanking_regions.csv # File containing the
+blast_database: example_database/assembly_lautropia_mirabilis.fna # Database to check for off-target binding
+flanking_regions_filename: references/split_hcr_flanking_regions.csv # File containing the
                                                                             # readout sequences
-pipeline_dir: /workdir/bmg224/hiprfish/probe_design/split_probe_design # Path to the 'split_probe_design' directory cloned from github
+pipeline_dir: . # Path to the 'split_probe_design' directory cloned from github
 
 ## Inputs
-input_filenames: [
-                  PBG-3104.plaque_mk_m_20210301_.CCS2.0000006459_plus_pstrip_filt_unique_lautropia_pdesign.fasta
-                  ]
+input_filenames: [gyrB.fasta]
 on_target_id_filename: False
                         # File in input folder containing manually
                         # collected on-target sequence ids in the database
                         # Tab format with columns: sseqid,sstart,send,aln_sub (bool for if we should consider only a subset of that sseqid between sstart,send, or the whole thing).
                         # Otherwise set to False
-target_naming: {'bmg_m.29;size=959;':'Lau'}
+target_naming: {'NGCDAHDB_00327':'gyrB'}
                                           # Dictionairy specifying easy-to-read
                                                                 # names for each target
-target_flanking: {'bmg_m.29;size=959;':'B2'}
+target_flanking: {'NGCDAHDB_00327':'B2'}
                                     # Assign each target a readout region by
                                     # referencing an ID from the
                                     # 'flanking_regions_filename'
