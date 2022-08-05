@@ -16,6 +16,7 @@ crosstalk_dir: outputs/crosstalk
 helper_select_dir: outputs/helper_selection
 final_outputs_dir: outputs/final_outputs
 
+primer3_path: INPUT_YOUR_PATH_TO_PRIMER3_EXECUTABLE_HERE
 blast_database: example_database/assembly_lautropia_mirabilis.fna # Database to check for off-target binding
 flanking_regions_filename: references/split_hcr_flanking_regions.csv # File containing the
                                                                             # readout sequences
