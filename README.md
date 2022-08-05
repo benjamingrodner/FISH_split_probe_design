@@ -10,7 +10,7 @@ This probe design is based on brute-force design of all possible probes, then fi
 The pipeline runs by executing the [Snakefile](https://github.com/benjamingrodner/FISH_split_probe_design/blob/main/Snakefile). The Snakefile refers to a series of [rules](https://github.com/benjamingrodner/FISH_split_probe_design/tree/main/rules), which directly run chunks of python code as well as specify the input and output files for the chunks. The code in the rules executes python functions loaded as modules from [scripts](https://github.com/benjamingrodner/FISH_split_probe_design/tree/main/scripts). The Snakefile, rules, and functions reference the [configuration file](https://github.com/benjamingrodner/FISH_split_probe_design/blob/main/config_example.yaml) to determine the specific filepaths and variable settings for the run. 
 
 ## Package requirements
-[primer3](https://github.com/primer3-org/primer3)
+[primer3](https://github.com/primer3-org/primer3) - Make sure to add the path to your primer3 executable to the configuration file
 
 [blastn](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
 
@@ -28,7 +28,7 @@ openpyxl=3.0.2
 
 
 ## Configuration
-Use the config_example.yaml as a template and put your configuration file in the directory where you want to design probes. Make all of your filepaths in the configuration file relative to the directory where you want to design probes.
+Use the config_example.yaml as a template and put your configuration file in the directory where you want to design probes. Make all of your filepaths in the configuration file relative to the directory where you want to design probes. Make sure to add the path to your primer3 executable to the configuration file. 
 
 Create a blast database using
 ```
