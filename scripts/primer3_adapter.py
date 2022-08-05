@@ -23,9 +23,11 @@ class Primer3Error(Exception):
 
 
 class Primer3(object):
-    def __init__(self, fasta_filename, min_tm=50,
-                 Na=390, dnac1_oligo=100, min_size=18, opt_size=20, max_size=22):
+    def __init__(self, fasta_filename, primer3_path
+                 min_tm=50, Na=390, dnac1_oligo=100, 
+                 min_size=18, opt_size=20, max_size=22):
         self.fasta_filename = fasta_filename
+        self.primer3_path = primer3_path
         self.targets = [record.id for record in SeqIO.parse(fasta_filename, 'fasta')]
         self.original_dir = os.getcwd()
         self.min_tm = min_tm
@@ -87,7 +89,7 @@ class Primer3(object):
         print('Wrote primer3 input: ', self.primer3_input)
 
     def _run_primer3(self):
-        subprocess.check_call(['/programs/primer3-2.3.5/src/primer3_core', '-p3_settings_file', self.primer3_settings_filename, '-output', self.primer3_output, '-format_output', self.primer3_input])
+        subprocess.check_call([self.primer3_path, '-p3_settings_file', self.primer3_settings_filename, '-output', self.primer3_output, '-format_output', self.primer3_input])
         return
 
     def _get_probes_as_df(self, probe_filename):
