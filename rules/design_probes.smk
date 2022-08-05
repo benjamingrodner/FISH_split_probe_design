@@ -10,7 +10,7 @@ rule design_probes:
     run:
         min_size, opt_size, max_size = [config['probe_length'][s]
                                         for s in ['min_size', 'opt_size', 'max_size']]
-        p3_object = Primer3(fasta_filename=input[0],
+        p3_object = Primer3(fasta_filename=input[0], primer3_path=config['primer3_path'],
                             min_size=min_size, opt_size=opt_size, max_size=max_size,
                             )
         target_dir = os.path.split(output[0])[0]
